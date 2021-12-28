@@ -1,25 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react';
+import styled from 'styled-components';
 
-function App() {
+import { FeaturedCharacter } from './areas/character/FeaturedCharacter';
+import { CharactersList } from './areas/charactersList/CharactersList';
+import { Favourites } from './areas/favourites/Favourites';
+import { Controller } from './areas/controler/Controller';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { getCharacters } from './redux/actions';
+
+const App = () => {
+  const { loading, error } = useSelector((state) => state);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getCharacters());
+  }, [dispatch]);
+
+  if (loading) {
+    return <div>loading..</div>;
+  }
+
+  if (error) {
+    return <div>something went wrong..</div>;
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Wrapper>
+      <Controller />
+      <FeaturedCharacter />
+      <CharactersList />
+      <Favourites />
+    </Wrapper>
   );
-}
+};
 
 export default App;
+
+const Wrapper = styled.div`
+  height: 100%;
+  display: grid;
+  grid-template-columns: 160px 1fr 240px;
+  grid-template-rows: auto 1fr 1fr 1fr;
+  grid-template-areas:
+    '. controller .'
+    '. featured favourites'
+    '. featured favourites'
+    '. charactersList .';
+`;
